@@ -1,0 +1,27 @@
+    # --- Developers (10 total) ---
+    devs = [
+        Developer("d1", {"analysis":1.25,"design":1.0,"implementation":1.25,"testing":1.25}, "director"),
+        Developer("d2", {"analysis":1.25,"design":1.0,"implementation":1.25,"testing":0.75}, "director"),
+        Developer("d3", {"analysis":0.75,"design":0.75,"implementation":1.0,"testing":1.0}, "manager"),
+        Developer("d4", {"analysis":0.75,"design":1.0,"implementation":1.0,"testing":0.75}, "manager"),
+        Developer("d5", {"analysis":1.0,"design":0.75,"implementation":0.75,"testing":1.0}, "engineer"),
+        Developer("d6", {"analysis":0.75,"design":1.0,"implementation":0.75,"testing":0.75}, "engineer"),
+        Developer("d7", {"analysis":1.0,"design":0.75,"implementation":1.0,"testing":0.75}, "engineer"),
+        Developer("d8", {"analysis":0.9,"design":0.9,"implementation":0.9,"testing":0.9}, "engineer"),
+        Developer("d9", {"analysis":0.8,"design":0.8,"implementation":0.8,"testing":0.8}, "engineer"),
+        Developer("d10",{"analysis":0.85,"design":0.85,"implementation":0.85,"testing":0.85}, "engineer"),
+    ]
+    # --- Tasks (same 11 tasks as Set1) ---
+    tasks = {
+        "t1": Task("t1","analysis",400,[]),
+        "t2": Task("t2","design",320,["t1"]),
+        "t3": Task("t3","design",240,["t1"]),
+        "t4": Task("t4","design",240,["t1"]),
+        "t5": Task("t5","implementation",240,["t2"]),
+        "t6": Task("t6","implementation",600,["t3"]),
+        "t7": Task("t7","implementation",160,["t4"]),
+        "t8": Task("t8","testing",100,["t5"]),
+        "t9": Task("t9","testing",80,["t6"]),
+        "t10": Task("t10","testing",70,["t7"]),
+        "t11": Task("t11","testing",80,["t8","t9","t10"]),
+    }
