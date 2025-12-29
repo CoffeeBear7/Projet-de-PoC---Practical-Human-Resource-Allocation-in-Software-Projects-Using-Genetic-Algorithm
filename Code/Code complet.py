@@ -5,10 +5,10 @@ from collections import deque
 # à chaque exécution, les tirages random (population initiale, mutation, tournoi, crossover…) seront identiques.
 random.seed(42)
 
-# Facteur de seniorité : on multiplie la vitesse “brute” d’un développeur par ce coefficient (comme dans l’article).
+# Facteur de seniorité pour prendre en compte l'experience de developpeur en compte.
 LEVEL_FACTOR={"junior":.8,"engineer":1.0,"manager":1.1,"director":1.2}
 
-# ---------- Structures de données ----------
+# Structures de données 
 # Un développeur = (id, compétences par type de tâche, niveau/seniorité).
 class Developer: 
     def __init__(s,id,ab,lv): 
@@ -18,8 +18,7 @@ class Developer:
 class Task:
     def __init__(s,id,typ,eff,pre): 
         s.id=id; s.typ=typ; s.effort=eff; s.prereq=list(pre)
-
-# ---------- Jeu de données de test : Set1 ----------
+# Jeu de données de test : Set1 
 def generate_set1_data():
     # Liste des développeurs avec leurs vitesses par type et leur niveau.
     devs=[Developer("d1",{"analysis":1.25,"design":1.0,"implementation":1.25,"testing":1.25},"director"),
@@ -44,24 +43,26 @@ def generate_set1_data():
            "t11":Task("t11","testing",80,["t8","t9","t10"])}
     return tasks, devs
 
-# ---------- Algorithme génétique (GA) ----------
+# Fonction principale qui permet d'implementer l'algorithme genetique
 def ga(tasks, devs, W, pop=20, gens=50, mut=0.03, tourn=3, elit=2, kmax=3, verbose=True):
     # Indexation (TaskID->index, DevID->index) pour accélérer les calculs en tableaux.
+    # on a créé des listes d'index pour les taches tidx et developpeurs didx car c'est plus rapide de parcourir les listes avec des indexes que des strings
     tids=list(tasks); tidx={t:i for i,t in enumerate(tids)}; nT=len(tids)
     dids=[d.id for d in devs]; didx={d:i for i,d in enumerate(dids)}; nD=len(dids)
 
-    # Infos utiles pour BA (balance par niveaux).
+    # Infos utiles pour le calcul de score BA
     dev_level={d.id:d.level for d in devs}; levels=sorted(set(d.level for d in devs))
 
-    # Construction du graphe de dépendances des tâches + effort.
+    # Construction du graphe de dépendances des tâches et d'effort.
     effort=[0.0]*nT; prereq=[[] for _ in range(nT)]; adj=[[] for _ in range(nT)]
     for tid,t in tasks.items():
         i=tidx[tid]                            # index de la tâche tid
         effort[i]=float(t.effort)              # effort numérique
-        prereq[i]=[tidx[p] for p in t.prereq]  # prérequis sous forme d’indices
+        prereq[i]=[tidx[p] for p in t.prereq]  # prérequis (dependances) sous forme d’indices
         for p in prereq[i]: adj[p].append(i)   # adj[p] contient les successeurs de p
 
-    # Matrice speed[dev_index][task_index] = vitesse effective (compétence * LEVEL_FACTOR).
+    # Matrice speed[dev_index][task_index] = vitesse effective (compétence * LEVEL_FACTOR)
+    # c'est une matrice 2D et représente la vitesse réelle de travail du développeur d sur la tâche t
     speed=[[0.0]*nT for _ in range(nD)]
     for d in devs:
         di=didx[d.id]; lf=LEVEL_FACTOR.get(d.level,1.0)
@@ -82,7 +83,7 @@ def ga(tasks, devs, W, pop=20, gens=50, mut=0.03, tourn=3, elit=2, kmax=3, verbo
             ch[tid]=out[:kmax] if out else [random.choice(dids)]
         return ch
 
-    # Borne optimiste minTS (chemin critique) :
+    # Borne optimiste minTS (chemin critique) : ici on calcule le Critical Time Span ou la durée de chemin critique
     # on suppose que chaque tâche est faite par le meilleur développeur possible pour son type.
     def minTS():
         best=[]
@@ -219,7 +220,7 @@ def ga(tasks, devs, W, pop=20, gens=50, mut=0.03, tourn=3, elit=2, kmax=3, verbo
                     if cand: ch[tid][i]=random.choice(cand)
         return sanitize(ch)
 
-    # ----- Boucle GA -----
+    # Boucle GA
     P=init()
     F,D=zip(*(score(ch) for ch in P)); F=list(F); D=list(D)
     b=max(range(pop), key=lambda i:F[i]); best=(P[b],F[b],D[b])
@@ -250,9 +251,9 @@ multitask_sum=lambda det: sum(v["ticks_with_multitask"] for v in det["sim"]["dev
 if __name__=="__main__":
     tasks, devs = generate_set1_data()
 
-    # ----- CaseAll : pondérations égales
+    # CaseAll : pondérations égales
     chromA, fitA, detA = ga(tasks, devs, {"cm":.25,"ce":.25,"cc":.25,"ba":.25})
-    # ----- CaseTime : optimiser uniquement le makespan (CM)
+    # CaseTime : optimiser uniquement la duree de projet (CM)
     chromT, fitT, detT = ga(tasks, devs, {"cm":1.0,"ce":0.0,"cc":0.0,"ba":0.0})
 
     timeA,multiA = detA["sim"]["finish_time"], multitask_sum(detA)
