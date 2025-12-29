@@ -66,3 +66,7 @@ We test the algorithm on **three different data sets**:
 
 Each set is defined explicitly in the code.
 
+## Note on Result Stability and Execution Setup
+It is important to note that the results presented in the comparison table were obtained by running the entire code at once for each dataset in Jupyter. For each set, the same full code was copied into a single cell, and only the input data (Set1, Set2, or Set3) was changed. Using this approach, the results were stable and reproducible across multiple executions.
+
+However, after restructuring the code into multiple Jupyter cells (with functions defined once and then called separately in the main cell), the results started to vary between executions. This behavior is mainly due to the use of randomness in the genetic algorithm and the fact that the random seed (s) is affected by the execution order of cells in Jupyter. As a result, even with the same seed value, different execution paths can lead to different solutions.
