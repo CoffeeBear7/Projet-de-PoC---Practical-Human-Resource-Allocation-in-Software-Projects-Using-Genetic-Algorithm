@@ -68,8 +68,6 @@ Each set is defined explicitly in the code.
 
 ## Note on Result Stability and Execution Setup
 
-Note on Result Stability and Execution Setup
-
 The code provided in the Code folder is written as a single integrated script. When executed as a whole, it produces stable and reproducible results across multiple runs. This is the version used to generate the results reported in the comparison table.
 To run experiments on different datasets (Set1, Set2, or Set3), it is sufficient to modify the input data section inside the script.
 
